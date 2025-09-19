@@ -18,6 +18,7 @@ namespace IKEA.BLL.Factories
                 DeptId = D.Id,
                 Name = D.Name,
                 Code = D.Code,
+                Description=D.Description,
                 DateOfCreation = D.CreatedOn
             };
 

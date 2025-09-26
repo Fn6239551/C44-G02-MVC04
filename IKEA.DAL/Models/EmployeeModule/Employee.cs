@@ -1,4 +1,5 @@
 ﻿
+using IKEA.DAL.Models.DepartmentModule;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,13 +15,13 @@ namespace IKEA.DAL.Models.EmployeeModule
         public int Age { get; set; }
         public string? Address { get; set; }
         public decimal Salary { get; set; }
-        
         public bool IsActive { get; set; }
-
         public string? Email { get; set; }
         public string? PhoneNumber { get; set; }
         public DateTime? HiringDate { get; set; }
         public Gender Gender { get; set; }
         public EmployeeTypes EmployeeType { get; set; }
+        public int? DepartmentId { get; set; }
+        public Department? Department { get; set; }
     }
 }

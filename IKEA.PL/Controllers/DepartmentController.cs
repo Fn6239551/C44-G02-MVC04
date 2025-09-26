@@ -16,9 +16,16 @@ namespace IKEA.PL.Controllers
         [HttpGet]
         public IActionResult Index()
         {
+            #region ViewData & ViewBag
+            //   ViewData["Message"] = "Hello From View Data";
+            //  ViewBag.Message = "Hello From View Bag";
+            ViewData["Message"] = new DepartmentDto() { Name = "TestViewData" };
+            ViewBag.Message = new DepartmentDto() { Name = "TestViewBag" }; 
+            #endregion
             var Departments = _departmentService.GetAllDepaartment();
             return View(Departments);
         }
+
         #region Create
         [HttpGet]
         public IActionResult Create()
@@ -26,22 +33,30 @@ namespace IKEA.PL.Controllers
             return View();
         }
         [HttpPost]
-        public IActionResult Create(CreatedDepartmentDto departmentDto)
+        public IActionResult Create(DepartmentViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    int Result = _departmentService.AddDepartment(departmentDto);
-                    if (Result > 0)
+                    var departmentDto = new CreatedDepartmentDto()
                     {
-                        return RedirectToAction(nameof(Index));
+                        Name=viewModel.Name,
+                        Code=viewModel.Code,
+                        CreatedOn = viewModel.CreatedOn,
+                        Description=viewModel.Description
+
+                    };
+                    int Result = _departmentService.AddDepartment(departmentDto);
+                    string Message;
+                    if (Result == 0) {
+                        Message = $"Department:{viewModel.Name}Has Been Created";
                     }
                     else
                     {
-                        ModelState.AddModelError(string.Empty, "Department Can not Be Created");
-                        // return View(departmentDto);
+                        Message = $"Department:{viewModel.Name}Has Not Been Created";
                     }
+                    return RedirectToAction(nameof(Index));
 
                 }
                 catch (Exception ex)
@@ -62,7 +77,7 @@ namespace IKEA.PL.Controllers
                 }
             }
 
-            return View(departmentDto);
+            return View(viewModel);
 
         }
         #endregion
@@ -85,7 +100,7 @@ namespace IKEA.PL.Controllers
             if (!id.HasValue) return BadRequest();//400
             var Department = _departmentService.GetDartmentById(id.Value);
             if (Department is null) return NotFound();
-            var DepartmentViewModel = new DepartmentEditViewModel()
+            var DepartmentViewModel = new DepartmentViewModel()
             {
                 Code = Department.Code,
                 Name = Department.Name,
@@ -95,7 +110,7 @@ namespace IKEA.PL.Controllers
             return View(DepartmentViewModel);
         }
         [HttpPost]
-        public IActionResult Edit([FromRoute] int? id, DepartmentEditViewModel viewModel)
+        public IActionResult Edit([FromRoute] int? id, DepartmentViewModel viewModel)
         {
             if (!ModelState.IsValid) return View(viewModel);
 

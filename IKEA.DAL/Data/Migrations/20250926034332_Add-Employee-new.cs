@@ -2,6 +2,7 @@
 
 #nullable disable
 
+
 namespace IKEA.DAL.Data.Migrations
 {
     /// <inheritdoc />

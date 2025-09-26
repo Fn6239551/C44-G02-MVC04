@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IKEA.BLL.DTOS
+namespace IKEA.BLL.DTOS.Department
 {
     public class CreatedDepartmentDto
     {

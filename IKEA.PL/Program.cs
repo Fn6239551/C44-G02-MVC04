@@ -1,7 +1,11 @@
-using IKEA.BLL.Services;
+using IKEA.BLL;
+using IKEA.BLL.Services.Classess;
+using IKEA.BLL.Services.Interfaces;
 using IKEA.DAL.Presistance.Data.Contexts;
-using IKEA.DAL.Presistance.Repositories;
+using IKEA.DAL.Presistance.Repositories.Classess;
+using IKEA.DAL.Presistance.Repositories.Interface;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace IKEA.PL
 {
@@ -24,6 +28,12 @@ namespace IKEA.PL
             });
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
             builder.Services.AddScoped<IDepartmentService,DepartmentService>();
+            builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>();
+           builder.Services.AddAutoMapper(E => E.AddProfile(new MappingProfiles()));
+          //  builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
+            builder.Services.AddScoped<IEmployeesService, EmployeeSevice>();
+
             #endregion
             var app = builder.Build();
 

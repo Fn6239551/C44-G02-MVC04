@@ -1,17 +1,16 @@
-﻿using System;
+﻿using IKEA.DAL.Models.Shared;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IKEA.BLL.DTOS
+namespace IKEA.DAL.Models.DepartmentModule
 {
-    public class DepartmentDto
+    public class Department:BaseEntity
     {
-        public int DeptId { get; set; }
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;
         public string? Description { get; set; }
-        public DateTime? DateOfCreation { get; set; }
     }
 }

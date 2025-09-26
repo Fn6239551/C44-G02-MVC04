@@ -1,6 +1,6 @@
-﻿using IKEA.BLL.DTOS;
+﻿using IKEA.BLL.DTOS.Department;
 
-namespace IKEA.BLL.Services
+namespace IKEA.BLL.Services.Interfaces
 {
     public interface IDepartmentService
     {

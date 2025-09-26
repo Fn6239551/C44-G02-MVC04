@@ -3,15 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IKEA.BLL.DTOS;
 
-namespace IKEA.BLL.DTOS
+
+namespace IKEA.BLL.DTOS.Department
 {
-    public class UpdateDepartmentDto
+    public class DepartmentDto
     {
-        public int Id { get; set; }
+        public int DeptId { get; set; }
         public string Name { get; set; } = null!;
         public string Code { get; set; } = null!;
         public string? Description { get; set; }
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? DateOfCreation { get; set; }
     }
 }

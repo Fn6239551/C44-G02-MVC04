@@ -1,7 +1,8 @@
-﻿ using IKEA.BLL.DTOS;
+﻿using IKEA.BLL.DTOS.Department;
 using IKEA.BLL.Factories;
+using IKEA.BLL.Services.Interfaces;
 using IKEA.DAL.Models;
-using IKEA.DAL.Presistance.Repositories;
+using IKEA.DAL.Presistance.Repositories.Interface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace IKEA.BLL.Services
+namespace IKEA.BLL.Services.Classess
 {
     public class DepartmentService(IDepartmentRepository departmentRepository) : IDepartmentService
     {

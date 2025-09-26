@@ -1,4 +1,4 @@
-﻿using IKEA.DAL.Models;
+﻿using IKEA.DAL.Models.EmployeeModule;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -10,15 +10,14 @@ using System.Threading.Tasks;
 
 namespace IKEA.DAL.Presistance.Data.Configurations
 {
-    public class DepartmentConfigurations:IEntityTypeConfiguration<Department>
+    public class DepartmentConfigurations:BaseEntityConfigurations<Employee>,IEntityTypeConfiguration<Employee>
     {
-        public void Configure(EntityTypeBuilder<Department> builder)
+        public void Configure(EntityTypeBuilder<Employee> builder)
         {
             builder.Property(D=>D.Id).UseIdentityColumn(10,10);
             builder.Property(D => D.Name).HasColumnType("varchar(20)");
-            builder.Property(D => D.Code).HasColumnType("varchar(20)");
-            builder.Property(D => D.CreatedOn).HasDefaultValueSql("GETDATE()");
-            builder.Property(D => D.LastModificationOn).HasDefaultValueSql("GETDATE()");
+            builder.Property(D => D.Salary).HasColumnType("varchar(20)");
+           base.Configure(builder);
         }
     }
 }

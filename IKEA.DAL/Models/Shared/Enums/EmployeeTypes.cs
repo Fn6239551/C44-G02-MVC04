@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 
 namespace IKEA.DAL.Models.Shared.Enums
 {
+
+
     public enum EmployeeTypes
     {
         fullTime =1,

@@ -12,6 +12,7 @@ namespace IKEA.DAL.Presistance.Repositories.Classess
     {
         private readonly ApplicationDbContext _dbContext = dbContext;
 
+
         public IEnumerable<TEntity> GetAll(bool withTracking = false)
         {
             if (withTracking)
@@ -25,23 +26,23 @@ namespace IKEA.DAL.Presistance.Repositories.Classess
         public TEntity? GetById(int id/*,ApplicationDbContext dbContext*/)
         => dbContext.Set<TEntity>().Find(id);
         //Add
-        public int Add(TEntity entity)
+        public void Add(TEntity entity)
         {
             dbContext.Set<TEntity>().Add(entity);
-            return dbContext.SaveChanges();
+          //  return dbContext.SaveChanges();
         }
         //Delete
-        public int Remove(TEntity entity)
+        public void Remove(TEntity entity)
         {
             dbContext.Set<TEntity>().Remove(entity);
-            return dbContext.SaveChanges();
+           // return _unitOfWork.SaveChanges();
         }
 
         //Update
-        public int Update(TEntity entity)
+        public void Update(TEntity entity)
         {
             dbContext.Set<TEntity>().Update(entity);
-            return dbContext.SaveChanges();
+           // return dbContext.SaveChanges();
         }
     }
 }

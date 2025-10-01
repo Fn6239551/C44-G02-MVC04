@@ -13,7 +13,7 @@ namespace IKEA.BLL.DTOS.Employee
         public int Id { get; set; }
         [Required]
         [MaxLength(50, ErrorMessage = "Max length should be 50 character")]
-        [MinLength(5, ErrorMessage = "Min length should be 5 characters")]
+        [MinLength(3, ErrorMessage = "Min length should be 5 characters")]
         public string Name { get; set; } = null!;
         [Range(22, 30)]
         public int? Age { get; set; }
@@ -33,5 +33,7 @@ namespace IKEA.BLL.DTOS.Employee
         public DateTime? HiringDate { get; set; }
         public Gender Gender { get; set; }
         public EmployeeTypes EmployeeType { get; set; }
+        public int? DepartmentId { get; set; }
+       
     }
 }

@@ -4,6 +4,7 @@ using IKEA.DAL.Presistance.Data.Contexts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace IKEA.DAL.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251001011739_AddImagePropertyToEmployee")]
+    partial class AddImagePropertyToEmployee
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -66,35 +69,6 @@ namespace IKEA.DAL.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Departments");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Code = "HR01",
-                            CreatedBy = 0,
-                            IsDeleted = false,
-                            LastModificationBy = 0,
-                            Name = "HR"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Code = "IT01",
-                            CreatedBy = 0,
-                            IsDeleted = false,
-                            LastModificationBy = 0,
-                            Name = "IT"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Code = "FIN01",
-                            CreatedBy = 0,
-                            IsDeleted = false,
-                            LastModificationBy = 0,
-                            Name = "Finance"
-                        });
                 });
 
             modelBuilder.Entity("IKEA.DAL.Models.EmployeeModule.Employee", b =>

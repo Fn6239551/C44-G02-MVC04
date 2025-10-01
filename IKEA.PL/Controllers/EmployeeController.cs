@@ -2,20 +2,29 @@
 using IKEA.BLL.DTOS.Employee;
 using IKEA.BLL.Services.Classess;
 using IKEA.BLL.Services.Interfaces;
+using IKEA.DAL.Models.DepartmentModule;
+using IKEA.DAL.Models.EmployeeModule;
+using IKEA.PL.ViewModels.EmployeeViewModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IKEA.PL.Controllers
 {
-    public class EmployeeController (IEmployeesService employeesService, ILogger<EmployeeController> logger, IWebHostEnvironment environment) : Controller
+    public class EmployeeController (IEmployeesService employeesService, ILogger<EmployeeController> logger, IWebHostEnvironment environment,IDepartmentService departmentService) : Controller
     {
         private readonly IEmployeesService _employeesService = employeesService;
         private readonly ILogger<EmployeeController> _logger = logger;
-        private readonly IWebHostEnvironment _environment = environment; 
+        private readonly IWebHostEnvironment _environment = environment;
+        private readonly IDepartmentService _departmentService = departmentService;
 
         #region Index
-        public IActionResult Index()
+        public IActionResult Index(string? EmployeeSearchName)
         {
             var Employee = _employeesService.GetAllEmployees(false);
+            if (!string.IsNullOrWhiteSpace(EmployeeSearchName))
+            {
+                Employee=Employee.Where(e=>e.Name.Contains(EmployeeSearchName,StringComparison.OrdinalIgnoreCase));
+            }
             return View(Employee);
         }
         #endregion
@@ -35,16 +44,36 @@ namespace IKEA.PL.Controllers
         [HttpGet]
         public IActionResult Create()
         {
-            return View();
+            var Model = new EmployeeViewModel
+            {
+                Departments = _departmentService.GetAllDepaartment()
+                .Select(d=>new SelectListItem { Value=d.DeptId.ToString(),Text=d.Name}).ToList()
+            };
+            return View(Model);
         }
 
         [HttpPost]
-        public IActionResult Create(CreatedEmployeeDto employeeDto)
+        public IActionResult Create(EmployeeViewModel EmployeeVM)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
+                    var employeeDto = new CreatedEmployeeDto()
+                    {
+                        Name=EmployeeVM.Name,
+                        Age=EmployeeVM.Age,
+                        Address=EmployeeVM.Address,
+                        Email=EmployeeVM.Email,
+                        EmployeeType=EmployeeVM.EmployeeType,
+                        Gender=EmployeeVM.Gender,
+                        HiringDate=EmployeeVM.HiringDate,
+                        IsActive=EmployeeVM.IsActive,
+                        PhoneNumber=EmployeeVM.PhoneNumber,
+                        Salary=EmployeeVM.Salary,
+                        DepartmentId=EmployeeVM.DepartmentId,
+                        Image =EmployeeVM.Image
+                    };
                     int result = _employeesService.CreateEmployee(employeeDto);
                     if (result > 0)
                         return RedirectToAction(nameof(Index));
@@ -59,8 +88,55 @@ namespace IKEA.PL.Controllers
                         _logger.LogError(ex.Message);
                 }
             }
-            return View(employeeDto);
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(E => E.Errors).Select(e => e.ErrorMessage).ToList();
+
+
+
+                ViewBag.Errors = errors;
+                EmployeeVM.Departments = _departmentService.GetAllDepaartment()
+                  .Select(d => new SelectListItem { Value = d.DeptId.ToString(), Text = d.Name }).ToList() ;
+                return View(EmployeeVM);
+            }
+            try
+            {
+                var employeeDto = new CreatedEmployeeDto()
+                {
+                    Name = EmployeeVM.Name,
+                    Age = EmployeeVM.Age,
+                    Address = EmployeeVM.Address,
+                    Email = EmployeeVM.Email,
+                    EmployeeType = EmployeeVM.EmployeeType,
+                    Gender = EmployeeVM.Gender,
+                    HiringDate = EmployeeVM.HiringDate,
+                    IsActive = EmployeeVM.IsActive,
+                    PhoneNumber = EmployeeVM.PhoneNumber,
+                    Salary = EmployeeVM.Salary,
+                    DepartmentId = EmployeeVM.DepartmentId,
+                    Image = EmployeeVM.Image
+                };
+
+                int result = _employeesService.CreateEmployee(employeeDto);
+                if (result > 0)
+                    return RedirectToAction(nameof(Index));
+
+                ModelState.AddModelError(string.Empty, "Employee cannot be created");
+            }
+            catch (Exception ex)
+            {
+                if (_environment.IsDevelopment())
+                    ModelState.AddModelError(string.Empty, ex.Message);
+                else
+                    _logger.LogError(ex.Message);
+            }
+            EmployeeVM.Departments = _departmentService.GetAllDepaartment()
+       .Select(d => new SelectListItem { Value = d.DeptId.ToString(), Text = d.Name }).ToList();
+
+            return View(EmployeeVM);
         }
+
+        
         #endregion
 
         #region Edit
@@ -71,9 +147,9 @@ namespace IKEA.PL.Controllers
             var employee = _employeesService.GetEmployeeById(id.Value);
             if (employee is null) return NotFound();
 
-            var employeeViewModel = new UpdatedEmployeeDto()
+            var EmployeeVM = new EmployeeViewModel()
             {
-                Id = employee.Id,
+               
                 Name = employee.Name,
                 Email = employee.Email,
                 Address = employee.Address,
@@ -83,51 +159,90 @@ namespace IKEA.PL.Controllers
                 Salary = employee.Salary,
                 Gender = employee.EmpGender,
                 EmployeeType = employee.EmpType,
-                IsActive = employee.IsActive
+                IsActive = employee.IsActive,
+                DepartmentId = employee.DepartmentId
             };
+            EmployeeVM.Departments =
+                 _departmentService.GetAllDepaartment()
+                .Select(d => new SelectListItem 
+                {
+                    Value = d.DeptId.ToString(),
+                    Text = d.Name,
+                    Selected=d.DeptId== employee.DepartmentId
 
-            return View(employeeViewModel);
+                }).ToList();
+            return View(EmployeeVM);
         }
 
         [HttpPost]
-        public IActionResult Edit([FromRoute] int? id, UpdatedEmployeeDto viewModel)
+        public IActionResult Edit([FromRoute] int? id, EmployeeViewModel EmployeeVM)
         {
-            if (!ModelState.IsValid) return View(viewModel);
-
+            if (!id.HasValue) return BadRequest();
+            if (!ModelState.IsValid)
+            {
+                EmployeeVM.Departments =
+                                    _departmentService.GetAllDepaartment()
+                                    .Select(d => new SelectListItem
+                                    {
+                                        Value = d.DeptId.ToString(),
+                                        Text = d.Name,
+                                        Selected = d.DeptId == EmployeeVM.DepartmentId
+                                    });
+                return View(EmployeeVM);
+            }
             try
             {
-                var updatedEmployee = new UpdatedEmployeeDto()
+                var employeeDto = new UpdatedEmployeeDto()
                 {
                     Id = id.Value,
-                    Name = viewModel.Name,
-                    Email = viewModel.Email,
-                    Address = viewModel.Address,
-                    PhoneNumber = viewModel.PhoneNumber,
-                    Age = viewModel.Age,
-                    HiringDate = viewModel.HiringDate,
-                    Salary = viewModel.Salary,
-                    Gender = viewModel.Gender,
-                    EmployeeType = viewModel.EmployeeType,
-                    IsActive = viewModel.IsActive
+                    Name = EmployeeVM.Name,
+                    Email = EmployeeVM.Email,
+                    Address = EmployeeVM.Address,
+                    PhoneNumber = EmployeeVM.PhoneNumber,
+                    Age = EmployeeVM.Age,
+                    HiringDate = EmployeeVM.HiringDate,
+                    Salary = EmployeeVM.Salary,
+                    Gender = EmployeeVM.Gender,
+                    EmployeeType = EmployeeVM.EmployeeType,
+                    IsActive = EmployeeVM.IsActive,
+                    DepartmentId = EmployeeVM.DepartmentId
                 };
-
-                int result = _employeesService.UpdateEmployee(updatedEmployee);
-                if (result > 0)
-                    return RedirectToAction(nameof(Index));
-                else
+                var Result = _employeesService.UpdateEmployee(employeeDto);
+                if (Result > 0)
                 {
-                    ModelState.AddModelError(string.Empty, "Employee cannot be updated");
-                    return View(viewModel);
+                    return RedirectToAction(nameof(Index));
                 }
+                ModelState.AddModelError(string.Empty, "Employee Can not Be Update");
+                EmployeeVM.Departments =
+                                    _departmentService.GetAllDepaartment()
+                                    .Select(d => new SelectListItem
+                                    {
+                                        Value = d.DeptId.ToString(),
+                                        Text = d.Name,
+                                        Selected = d.DeptId == EmployeeVM.DepartmentId
+                                    }).ToList();
+                return View(EmployeeVM);
             }
             catch (Exception ex)
             {
                 if (_environment.IsDevelopment())
+                {
                     ModelState.AddModelError(string.Empty, ex.Message);
+                    EmployeeVM.Departments =
+                           _departmentService.GetAllDepaartment()
+                           .Select(d => new SelectListItem
+                           {
+                               Value = d.DeptId.ToString(),
+                               Text = d.Name,
+                               Selected = d.DeptId == EmployeeVM.DepartmentId
+                           });
+                    return View(EmployeeVM);
+                }
                 else
+                {
                     _logger.LogError(ex.Message);
-
-                return View(viewModel);
+                    return View("ErrorView", ex);
+                }
             }
         }
         #endregion

@@ -23,8 +23,12 @@ namespace IKEA.DAL.Presistance.Data.Configurations
                 .WithOne(E => E.Department)
                 .HasForeignKey(E => E.DepartmentId)
                 .OnDelete(DeleteBehavior.SetNull);
-
-           base.Configure(builder);
+            builder.HasData(
+                new Department { Id = 1, Name = "HR", Code = "HR01" },
+                new Department { Id = 2, Name = "IT", Code = "IT01" },
+                new Department { Id = 3, Name = "Finance", Code = "FIN01" }
+            );
+            base.Configure(builder);
         }
     }
 }

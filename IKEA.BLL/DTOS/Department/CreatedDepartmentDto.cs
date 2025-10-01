@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -16,5 +17,6 @@ namespace IKEA.BLL.DTOS.Department
         public string Code { get; set; } = null!;
         public string? Description { get; set; }
         public DateTime? CreatedOn { get; set; }
+        
     }
 }

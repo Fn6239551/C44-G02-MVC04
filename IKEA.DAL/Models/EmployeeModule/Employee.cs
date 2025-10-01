@@ -11,7 +11,7 @@ namespace IKEA.DAL.Models.EmployeeModule
     public class Employee:BaseEntity
     {
 
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
         public int Age { get; set; }
         public string? Address { get; set; }
         public decimal Salary { get; set; }
@@ -22,6 +22,7 @@ namespace IKEA.DAL.Models.EmployeeModule
         public Gender Gender { get; set; }
         public EmployeeTypes EmployeeType { get; set; }
         public int? DepartmentId { get; set; }
-        public Department? Department { get; set; }
+        public virtual Department? Department { get; set; }
+        public string? ImageName { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 using IKEA.BLL;
+using IKEA.BLL.AttachementsService;
 using IKEA.BLL.Services.Classess;
 using IKEA.BLL.Services.Interfaces;
 using IKEA.DAL.Presistance.Data.Contexts;
@@ -24,7 +25,7 @@ namespace IKEA.PL
                 //options.UseSqlServer(builder.Configuration["ConnectionsStrings:DefualtConnection"]);
                // options.UseSqlServer(builder.Configuration.GetSection("ConnectionString")["DefaultConnection"]);
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-
+                options.UseLazyLoadingProxies();
             });
             builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
             builder.Services.AddScoped<IDepartmentService,DepartmentService>();
@@ -33,7 +34,8 @@ namespace IKEA.PL
           //  builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
             builder.Services.AddScoped<IEmployeesService, EmployeeSevice>();
-
+            builder.Services.AddScoped<IunitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IAttachementService, AttachementService>();
             #endregion
             var app = builder.Build();
 

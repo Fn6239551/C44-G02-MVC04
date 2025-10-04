@@ -4,6 +4,8 @@ namespace IKEA.PL.ViewModels.AccountViewModels
 {
     public class RegisterViewModel
     {
+
+
         [Required]
         [MaxLength(50)]
         public string FirstName { get; set; }

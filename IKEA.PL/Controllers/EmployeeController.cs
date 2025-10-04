@@ -5,11 +5,13 @@ using IKEA.BLL.Services.Interfaces;
 using IKEA.DAL.Models.DepartmentModule;
 using IKEA.DAL.Models.EmployeeModule;
 using IKEA.PL.ViewModels.EmployeeViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace IKEA.PL.Controllers
 {
+    [Authorize]
     public class EmployeeController (IEmployeesService employeesService, ILogger<EmployeeController> logger, IWebHostEnvironment environment,IDepartmentService departmentService) : Controller
     {
         private readonly IEmployeesService _employeesService = employeesService;

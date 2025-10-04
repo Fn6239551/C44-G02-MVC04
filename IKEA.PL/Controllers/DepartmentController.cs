@@ -2,11 +2,13 @@
 using IKEA.BLL.Services.Interfaces;
 using IKEA.DAL.Models;
 using IKEA.PL.ViewModels.DepartmentViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection.Metadata.Ecma335;
 
 namespace IKEA.PL.Controllers
 {
+    [Authorize]
     public class DepartmentController(IDepartmentService departmentService, ILogger<DepartmentController> logger, IWebHostEnvironment environment) : Controller
     {
         private readonly IDepartmentService _departmentService = departmentService;

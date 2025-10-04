@@ -2,11 +2,14 @@ using IKEA.BLL;
 using IKEA.BLL.AttachementsService;
 using IKEA.BLL.Services.Classess;
 using IKEA.BLL.Services.Interfaces;
+using IKEA.DAL.Models.Shared;
 using IKEA.DAL.Presistance.Data.Contexts;
 using IKEA.DAL.Presistance.Repositories.Classess;
 using IKEA.DAL.Presistance.Repositories.Interface;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace IKEA.PL
 {
@@ -23,25 +26,34 @@ namespace IKEA.PL
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
             {
                 //options.UseSqlServer(builder.Configuration["ConnectionsStrings:DefualtConnection"]);
-               // options.UseSqlServer(builder.Configuration.GetSection("ConnectionString")["DefaultConnection"]);
+                // options.UseSqlServer(builder.Configuration.GetSection("ConnectionString")["DefaultConnection"]);
                 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 options.UseLazyLoadingProxies();
             });
-            builder.Services.AddScoped<IDepartmentRepository,DepartmentRepository>();
-            builder.Services.AddScoped<IDepartmentService,DepartmentService>();
-            builder.Services.AddScoped<IEmployeeRepository,EmployeeRepository>();
-           builder.Services.AddAutoMapper(E => E.AddProfile(new MappingProfiles()));
-          //  builder.Services.AddAutoMapper(typeof(MappingProfiles));
+            builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+            builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            builder.Services.AddAutoMapper(E => E.AddProfile(new MappingProfiles()));
+            //  builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
             builder.Services.AddScoped<IEmployeesService, EmployeeSevice>();
             builder.Services.AddScoped<IunitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IAttachementService, AttachementService>();
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/SignIn";
+            }
+            );
             #endregion
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
-            {
+            { 
                 app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
@@ -49,14 +61,15 @@ namespace IKEA.PL
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
-
+             
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Account}/{action=Register}/{id?}");
 
             app.Run();
         }

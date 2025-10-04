@@ -7,18 +7,25 @@ using System.Threading.Tasks;
 using System.Reflection;
 using IKEA.DAL.Models.DepartmentModule;
 using IKEA.DAL.Models.EmployeeModule;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+
 namespace IKEA.DAL.Presistance.Data.Contexts
 {
-    public class ApplicationDbContext:DbContext
+    public class ApplicationDbContext: IdentityDbContext<ApplicationUser>
     {
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) :base(options)
         {
 
         }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Models.EmployeeModule.Employee> Employees { get; set; }
+      //  public DbSet<Microsoft.AspNetCore.Identity.IdentityUser> Users {  get; set; }
+       // public DbSet<IdentityRoles>Roles { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         }
     }
